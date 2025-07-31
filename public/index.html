@@ -598,8 +598,8 @@
                 </div>
                 <div class="video-controls">
                     <button class="video-btn" id="skip-btn">Skip (Esc)</button>
-                    <button class="video-btn" onclick="toggleMute()">🔊 Audio</button>
-                    <button class="video-btn" onclick="toggleVideo()">📹 Video</button>
+                    <button class="video-btn" id="mute-btn">🔊 Audio</button>
+                    <button class="video-btn" id="video-btn">📹 Video</button>
                 </div>
             </div>
             <div class="chat-section">
@@ -678,6 +678,8 @@
 
             let timeout
             let pc, ls
+            let isMuted = false
+            let isVideoEnabled = true
 
             const $peopleOnline = $('#peopleOnline span')
             const $msgs = $('#message-area')
@@ -688,6 +690,8 @@
             const $skipBtn2 = $('#skip-btn2')
             const $sendBtn = $('#send-btn')
             const $input = $('#message-input')
+            const $muteBtn = $('#mute-btn')
+            const $videoBtn = $('#video-btn')
 
             function configureChat() {
                 $input.focus()
@@ -714,6 +718,33 @@
                     }, debounceTime)
                 })
             }
+
+            // Audio/Video controls
+            function toggleMute() {
+                if (ls) {
+                    const audioTracks = ls.getAudioTracks()
+                    audioTracks.forEach(track => {
+                        track.enabled = !track.enabled
+                    })
+                    isMuted = !isMuted
+                    $muteBtn.textContent = isMuted ? '🔇 Unmute' : '🔊 Audio'
+                }
+            }
+
+            function toggleVideo() {
+                if (ls) {
+                    const videoTracks = ls.getVideoTracks()
+                    videoTracks.forEach(track => {
+                        track.enabled = !track.enabled
+                    })
+                    isVideoEnabled = !isVideoEnabled
+                    $videoBtn.textContent = isVideoEnabled ? '📹 Video' : '📹 Enable'
+                }
+            }
+
+            // Add event listeners for controls
+            $muteBtn.addEventListener('click', toggleMute)
+            $videoBtn.addEventListener('click', toggleVideo)
 
             // hide loader when video connected
             $videoPeer.addEventListener('play', () => {
@@ -880,17 +911,6 @@
 
             configureChat()
             await initializeConnection()
-        }
-
-        // Audio/Video controls
-        window.toggleMute = function() {
-            // Implementation for mute toggle
-            console.log('Toggle mute')
-        }
-
-        window.toggleVideo = function() {
-            // Implementation for video toggle  
-            console.log('Toggle video')
         }
     </script>
 </body>
