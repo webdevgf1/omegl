@@ -13,12 +13,16 @@ function configureTopbar() {
 function configureFeedbackModal() {
     const modal = document.getElementById('feedbackModal');
     const btn = document.getElementById('feedback-btn');
+    
+    // Only configure if elements exist
+    if (!modal || !btn) {
+        console.log('Feedback modal elements not found, skipping configuration');
+        return;
+    }
+
     const close = document.querySelector('#feedbackModal .close');
     const text = document.getElementById('feedbackText');
     const form = document.getElementById('feedbackForm');
-
-    // Only configure if elements exist
-    if (!modal || !btn) return;
 
     btn.onclick = () => {
         modal.style.display = 'block';
@@ -62,26 +66,13 @@ function configureFeedbackModal() {
     }
 }
 
-// Initialize main functions
+// Safe initialization - only run if DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    configureTopbar();
-    configureFeedbackModal();
-    console.log('Main.js initialized');
-});
-
-// Prevent errors if functions are called before DOM is ready
-if (typeof configureTopbar !== 'undefined') {
-    try {
-        configureTopbar();
-    } catch (e) {
-        // Silently handle missing elements
-    }
-}
-
-if (typeof configureFeedbackModal !== 'undefined') {
+    // Only configure elements that exist
     try {
         configureFeedbackModal();
-    } catch (e) {
-        // Silently handle missing elements
+        console.log('Main.js initialized successfully');
+    } catch (error) {
+        console.log('Some main.js functions skipped due to missing elements');
     }
-}
+});
